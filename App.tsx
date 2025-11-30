@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { HashRouter } from 'react-router-dom'; // Included for structure, though we use state nav here
+import { HashRouter } from 'react-router-dom';
 import { AppView } from './types';
 import { Dashboard } from './components/Dashboard';
 import { BibleChat } from './components/BibleChat';
 import { PrayerWall } from './components/PrayerWall';
 import { WorshipSchedule } from './components/WorshipSchedule';
 import { CommunityForum } from './components/CommunityForum';
+import { Hymnal } from './components/Hymnal';
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -14,7 +15,8 @@ import {
   MessageCircle, 
   Menu,
   X,
-  Church
+  Church,
+  Music
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -26,6 +28,7 @@ const App: React.FC = () => {
     { view: AppView.BIBLE_STUDY_AI, label: 'Bible Study AI', icon: BookOpen },
     { view: AppView.PRAYER_TRACKER, label: 'Prayer Wall', icon: Heart },
     { view: AppView.WORSHIP_SCHEDULE, label: 'Worship Schedule', icon: Calendar },
+    { view: AppView.HYMNAL, label: 'Hymnal', icon: Music },
     { view: AppView.COMMUNITY_FORUM, label: 'Fellowship', icon: MessageCircle },
   ];
 
@@ -40,6 +43,7 @@ const App: React.FC = () => {
       case AppView.BIBLE_STUDY_AI: return <BibleChat />;
       case AppView.PRAYER_TRACKER: return <PrayerWall />;
       case AppView.WORSHIP_SCHEDULE: return <WorshipSchedule />;
+      case AppView.HYMNAL: return <Hymnal />;
       case AppView.COMMUNITY_FORUM: return <CommunityForum />;
       default: return <Dashboard navigate={handleNav} />;
     }

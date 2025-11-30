@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { MOCK_PRAYERS } from '../constants';
 import { PrayerRequest } from '../types';
-import { Plus, CheckCircle2, Circle, Trash2 } from 'lucide-react';
+import { Plus, CheckCircle2, Circle, Trash2, HeartHandshake } from 'lucide-react';
 
 export const PrayerWall: React.FC = () => {
   const [prayers, setPrayers] = useState<PrayerRequest[]>(MOCK_PRAYERS);
   const [newPrayerTitle, setNewPrayerTitle] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [prayingFor, setPrayingFor] = useState<Set<string>>(new Set());
 
   const addPrayer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +19,7 @@ export const PrayerWall: React.FC = () => {
       category: 'Personal',
       date: new Date().toISOString().split('T')[0],
       isAnswered: false,
+      prayingCount: 0,
     };
     
     setPrayers([newRequest, ...prayers]);
@@ -32,6 +34,15 @@ export const PrayerWall: React.FC = () => {
 
   const deletePrayer = (id: string) => {
     setPrayers(prayers.filter(p => p.id !== id));
+  };
+
+  const incrementPraying = (id: string) => {
+    if (prayingFor.has(id)) return;
+    
+    setPrayers(prayers.map(p => 
+      p.id === id ? { ...p, prayingCount: p.prayingCount + 1 } : p
+    ));
+    setPrayingFor(prev => new Set(prev).add(id));
   };
 
   const filteredPrayers = activeCategory === 'All' 
@@ -85,7 +96,7 @@ export const PrayerWall: React.FC = () => {
         {filteredPrayers.map(prayer => (
           <div 
             key={prayer.id} 
-            className={`p-5 rounded-xl border transition-all ${
+            className={`p-5 rounded-xl border transition-all flex flex-col ${
               prayer.isAnswered 
                 ? 'bg-green-50 border-green-200' 
                 : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
@@ -110,11 +121,21 @@ export const PrayerWall: React.FC = () => {
             
             {prayer.notes && <p className="text-gray-600 text-sm mb-4">{prayer.notes}</p>}
             
-            <div className="flex items-center justify-between text-sm mt-auto pt-4 border-t border-gray-100/50">
-              <span className="text-gray-400">{prayer.date}</span>
+            <div className="mt-auto pt-4 border-t border-gray-100/50 flex items-center justify-between">
+              <button 
+                onClick={() => incrementPraying(prayer.id)}
+                disabled={prayingFor.has(prayer.id) || prayer.isAnswered}
+                className={`flex items-center gap-2 text-sm font-medium transition-colors ${
+                  prayingFor.has(prayer.id) ? 'text-brand-600' : 'text-gray-500 hover:text-brand-600'
+                }`}
+              >
+                <HeartHandshake size={18} />
+                <span>{prayer.prayingCount} Praying</span>
+              </button>
+
               <button 
                 onClick={() => toggleAnswered(prayer.id)}
-                className={`flex items-center gap-1.5 font-medium ${
+                className={`flex items-center gap-1.5 text-sm font-medium ${
                   prayer.isAnswered ? 'text-green-600' : 'text-gray-400 hover:text-brand-600'
                 }`}
               >
@@ -122,6 +143,7 @@ export const PrayerWall: React.FC = () => {
                 {prayer.isAnswered ? 'Answered' : 'Mark Answered'}
               </button>
             </div>
+            <div className="text-xs text-gray-400 mt-2 text-right">{prayer.date}</div>
           </div>
         ))}
       </div>

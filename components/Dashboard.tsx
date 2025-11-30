@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AppView, ServiceEvent } from '../types';
 import { MOCK_EVENTS } from '../constants';
 import { generateDailyVerse } from '../services/geminiService';
-import { Calendar, BookOpen, MessageCircle, Heart } from 'lucide-react';
+import { Calendar, BookOpen, MessageCircle, Heart, Music } from 'lucide-react';
 
 interface DashboardProps {
   navigate: (view: AppView) => void;
@@ -54,15 +54,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ navigate }) => {
           <p className="text-sm text-gray-500 mt-1">Log prayers, requests, and thanksgiving.</p>
         </button>
 
-        <button 
-          onClick={() => navigate(AppView.WORSHIP_SCHEDULE)}
+         <button 
+          onClick={() => navigate(AppView.HYMNAL)}
           className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group text-left"
         >
-          <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 mb-4 group-hover:scale-110 transition-transform">
-            <Calendar size={24} />
+          <div className="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center text-rose-600 mb-4 group-hover:scale-110 transition-transform">
+            <Music size={24} />
           </div>
-          <h3 className="font-semibold text-gray-900">Worship Schedule</h3>
-          <p className="text-sm text-gray-500 mt-1">Upcoming services and congregational events.</p>
+          <h3 className="font-semibold text-gray-900">Digital Hymnal</h3>
+          <p className="text-sm text-gray-500 mt-1">Classic hymns for worship and praise.</p>
         </button>
 
         <button 

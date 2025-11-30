@@ -4,6 +4,7 @@ export enum AppView {
   PRAYER_TRACKER = 'PRAYER_TRACKER',
   WORSHIP_SCHEDULE = 'WORSHIP_SCHEDULE',
   COMMUNITY_FORUM = 'COMMUNITY_FORUM',
+  HYMNAL = 'HYMNAL',
 }
 
 export interface PrayerRequest {
@@ -13,6 +14,7 @@ export interface PrayerRequest {
   date: string;
   isAnswered: boolean;
   notes?: string;
+  prayingCount: number;
 }
 
 export interface ServiceEvent {
@@ -40,4 +42,12 @@ export interface ChatMessage {
   role: 'user' | 'model';
   text: string;
   isStreaming?: boolean;
+}
+
+export interface Hymn {
+  id: string;
+  number: number;
+  title: string;
+  key: string;
+  lyrics: string[];
 }

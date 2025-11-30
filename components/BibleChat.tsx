@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createBibleChat } from '../services/geminiService';
 import { ChatMessage } from '../types';
-import { Send, User, Bot, Loader2 } from 'lucide-react';
+import { Send, User, Bot, Loader2, Sparkles } from 'lucide-react';
 import { Chat, GenerateContentResponse } from '@google/genai';
 
 export const BibleChat: React.FC = () => {
@@ -16,6 +16,14 @@ export const BibleChat: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatSessionRef = useRef<Chat | null>(null);
+
+  const suggestionChips = [
+    "Plan of Salvation",
+    "Restoration History",
+    "Acts 2:38 Meaning",
+    "Christian Living",
+    "Worship in Spirit & Truth"
+  ];
 
   useEffect(() => {
     // Initialize chat session once
@@ -32,14 +40,13 @@ export const BibleChat: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || !chatSessionRef.current || isLoading) return;
+  const handleSend = async (text: string) => {
+    if (!text.trim() || !chatSessionRef.current || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      text: input
+      text: text
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -47,7 +54,6 @@ export const BibleChat: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Create a placeholder for the model's response
       const responseId = (Date.now() + 1).toString();
       setMessages(prev => [...prev, { id: responseId, role: 'model', text: '', isStreaming: true }]);
 
@@ -83,6 +89,11 @@ export const BibleChat: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSend(input);
   };
 
   return (
@@ -123,8 +134,21 @@ export const BibleChat: React.FC = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 bg-white border-t border-gray-200">
-        <div className="relative">
+      <div className="p-4 bg-white border-t border-gray-200 space-y-3">
+        {messages.length < 3 && !isLoading && (
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+             {suggestionChips.map((chip) => (
+               <button
+                 key={chip}
+                 onClick={() => handleSend(chip)}
+                 className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 text-brand-700 rounded-full text-xs font-medium hover:bg-brand-100 transition-colors whitespace-nowrap"
+               >
+                 <Sparkles size={12} /> {chip}
+               </button>
+             ))}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="relative">
           <input
             type="text"
             value={input}
@@ -140,8 +164,8 @@ export const BibleChat: React.FC = () => {
           >
             {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
