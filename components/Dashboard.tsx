@@ -1,100 +1,130 @@
 import React, { useEffect, useState } from 'react';
 import { AppView, ServiceEvent } from '../types';
-import { MOCK_EVENTS } from '../constants';
+import { MOCK_EVENTS, MOCK_PRAYERS } from '../constants';
 import { generateDailyVerse } from '../services/geminiService';
-import { Calendar, BookOpen, MessageCircle, Heart, Music } from 'lucide-react';
+import { Bell, Book, Calendar, MessageCircle, Heart, Clock, ChevronRight } from 'lucide-react';
 
 interface DashboardProps {
   navigate: (view: AppView) => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ navigate }) => {
-  const [dailyVerse, setDailyVerse] = useState<string>('Loading daily scripture...');
-  const [nextEvent, setNextEvent] = useState<ServiceEvent | null>(null);
+  const [dailyVerse, setDailyVerse] = useState<{text: string, reference: string}>({
+    text: "Loading daily scripture...",
+    reference: ""
+  });
+  const [activeNotifications] = useState(3);
 
   useEffect(() => {
-    generateDailyVerse().then(setDailyVerse);
-    setNextEvent(MOCK_EVENTS[0]); // Simplified for demo
+    generateDailyVerse().then(verse => {
+      // Simple parse for the AI response to split reference if possible
+      const parts = verse.split('-');
+      if (parts.length > 1) {
+        const reference = parts.pop()?.trim() || "";
+        const text = parts.join('-').replace(/"/g, '').trim();
+        setDailyVerse({ text, reference });
+      } else {
+        setDailyVerse({ text: verse.replace(/"/g, ''), reference: "Daily Verse" });
+      }
+    });
   }, []);
+
+  const assistants = [
+    { name: "Bible Study", color: "bg-blue-600", icon: <Book size={24} />, view: AppView.BIBLE_STUDY_AI },
+    { name: "Prayer", color: "bg-green-600", icon: <Heart size={24} />, view: AppView.PRAYER_TRACKER },
+    { name: "Worship", color: "bg-purple-600", icon: <MessageCircle size={24} />, view: AppView.HYMNAL },
+    { name: "Christian Living", color: "bg-yellow-600", icon: <Clock size={24} />, view: AppView.BIBLE_STUDY_AI },
+    { name: "Apologetics", color: "bg-red-600", icon: <Bell size={24} />, view: AppView.BIBLE_STUDY_AI },
+    { name: "Church History", color: "bg-teal-600", icon: <Calendar size={24} />, view: AppView.BIBLE_STUDY_AI }
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Hero / Daily Verse */}
-      <div className="bg-brand-700 rounded-2xl p-8 text-white shadow-lg relative overflow-hidden">
-        <div className="relative z-10">
-          <h2 className="text-brand-200 uppercase tracking-widest text-sm font-semibold mb-3">Daily Bread</h2>
-          <blockquote className="font-serif text-2xl md:text-3xl italic leading-relaxed mb-4">
-            {dailyVerse}
-          </blockquote>
-          <p className="text-brand-100 text-sm">Empowered by Gemini AI</p>
+      {/* Header */}
+      <div className="flex justify-between items-center bg-blue-700 text-white p-4 rounded-xl shadow-md">
+        <h1 className="text-xl font-bold">Church of Christ</h1>
+        <div className="relative">
+          <Bell size={24} />
+          {activeNotifications > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {activeNotifications}
+            </span>
+          )}
         </div>
-        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-brand-600 rounded-full opacity-30 blur-3xl"></div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <button 
-          onClick={() => navigate(AppView.BIBLE_STUDY_AI)}
-          className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group text-left"
-        >
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 mb-4 group-hover:scale-110 transition-transform">
-            <BookOpen size={24} />
-          </div>
-          <h3 className="font-semibold text-gray-900">Bible AI Assistant</h3>
-          <p className="text-sm text-gray-500 mt-1">Ask questions about scripture, doctrine, and history.</p>
-        </button>
-
-        <button 
-          onClick={() => navigate(AppView.PRAYER_TRACKER)}
-          className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group text-left"
-        >
-          <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 mb-4 group-hover:scale-110 transition-transform">
-            <Heart size={24} />
-          </div>
-          <h3 className="font-semibold text-gray-900">Prayer Tracker</h3>
-          <p className="text-sm text-gray-500 mt-1">Log prayers, requests, and thanksgiving.</p>
-        </button>
-
-         <button 
-          onClick={() => navigate(AppView.HYMNAL)}
-          className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group text-left"
-        >
-          <div className="w-12 h-12 bg-rose-100 rounded-lg flex items-center justify-center text-rose-600 mb-4 group-hover:scale-110 transition-transform">
-            <Music size={24} />
-          </div>
-          <h3 className="font-semibold text-gray-900">Digital Hymnal</h3>
-          <p className="text-sm text-gray-500 mt-1">Classic hymns for worship and praise.</p>
-        </button>
-
-        <button 
-          onClick={() => navigate(AppView.COMMUNITY_FORUM)}
-          className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all group text-left"
-        >
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600 mb-4 group-hover:scale-110 transition-transform">
-            <MessageCircle size={24} />
-          </div>
-          <h3 className="font-semibold text-gray-900">Fellowship Forum</h3>
-          <p className="text-sm text-gray-500 mt-1">Connect and encourage the brotherhood.</p>
-        </button>
-      </div>
-
-      {/* Quick Look: Next Event */}
+      
+      {/* Daily Verse Card */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-        <h3 className="text-lg font-serif font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <Calendar size={20} className="text-brand-600"/> Upcoming Service
-        </h3>
-        {nextEvent ? (
-          <div className="flex flex-col md:flex-row md:items-center justify-between bg-gray-50 p-4 rounded-lg">
-            <div>
-              <h4 className="font-semibold text-gray-900">{nextEvent.title}</h4>
-              <p className="text-gray-600 text-sm">{nextEvent.date} @ {nextEvent.time}</p>
-            </div>
-            <div className="mt-3 md:mt-0 text-sm text-gray-500 italic max-w-md text-right">
-              "{nextEvent.description}"
-            </div>
+        <h2 className="text-lg font-semibold text-blue-700 mb-2">Daily Verse</h2>
+        <p className="my-2 italic text-gray-700 text-lg">"{dailyVerse.text}"</p>
+        <p className="text-right font-medium text-gray-500">{dailyVerse.reference}</p>
+      </div>
+      
+      {/* AI Assistants Grid */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800 mb-3 px-1">Faith Assistants</h2>
+        <div className="grid grid-cols-3 gap-3">
+          {assistants.map((assistant, index) => (
+            <button 
+              key={index} 
+              onClick={() => navigate(assistant.view)}
+              className={`${assistant.color} rounded-xl p-4 flex flex-col items-center justify-center text-white shadow-sm hover:shadow-md transition-all hover:scale-105`}
+            >
+              {assistant.icon}
+              <span className="mt-2 text-xs text-center font-medium leading-tight">{assistant.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Upcoming Events */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h2 className="text-lg font-semibold text-gray-800">Upcoming Events</h2>
+            <button onClick={() => navigate(AppView.WORSHIP_SCHEDULE)} className="text-blue-700 text-sm font-medium hover:underline">View All</button>
           </div>
-        ) : (
-          <p className="text-gray-500">No upcoming events scheduled.</p>
-        )}
+          <div className="divide-y divide-gray-100">
+            {MOCK_EVENTS.slice(0, 3).map(event => (
+              <div key={event.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex justify-between mb-1">
+                  <span className="font-medium text-gray-900">{event.title}</span>
+                  <span className="text-gray-500 text-sm bg-gray-100 px-2 py-0.5 rounded-full">{event.time}</span>
+                </div>
+                <span className="text-gray-500 text-sm flex items-center gap-1">
+                  <Calendar size={14}/> {event.date}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Prayer Tracker Preview */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h2 className="text-lg font-semibold text-gray-800">Prayer Tracker</h2>
+            <button onClick={() => navigate(AppView.PRAYER_TRACKER)} className="text-blue-700 text-sm font-medium hover:underline">View All</button>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {MOCK_PRAYERS.slice(0, 3).map(prayer => (
+              <div key={prayer.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex justify-between items-start">
+                  <span className="font-medium text-gray-900">{prayer.name}</span>
+                  {prayer.status === "answered" ? (
+                    <span className="text-green-600 text-xs px-2 py-1 bg-green-100 rounded-full font-medium">
+                      Answered
+                    </span>
+                  ) : (
+                    <span className="text-blue-600 text-xs px-2 py-1 bg-blue-100 rounded-full font-medium">
+                      {prayer.category}
+                    </span>
+                  )}
+                </div>
+                <p className="text-gray-500 text-sm mt-1 truncate">{prayer.request}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

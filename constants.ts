@@ -15,15 +15,62 @@ When answering:
 - Avoid human creeds or catechisms as authoritative sources. Only the Bible is the standard.`;
 
 export const MOCK_PRAYERS: PrayerRequest[] = [
-  { id: '1', title: 'Healing for Sister Johnson', category: 'Sick', date: '2023-10-25', isAnswered: false, notes: 'Recovering from surgery.', prayingCount: 12 },
-  { id: '2', title: 'Mission Team in Kenya', category: 'Missions', date: '2023-10-20', isAnswered: false, notes: 'Safe travels and fruitful labor.', prayingCount: 8 },
-  { id: '3', title: 'Wisdom for Elders', category: 'Congregation', date: '2023-10-15', isAnswered: true, notes: 'Guidance on upcoming budget.', prayingCount: 24 },
+  { 
+    id: '1', 
+    name: "Sister Mary", 
+    request: "Recovery from surgery", 
+    date: "Feb 25, 2025", 
+    status: "ongoing",
+    category: "Health", 
+    reminderSet: true,
+    prayingCount: 12
+  },
+  { 
+    id: '2', 
+    name: "Brother John's family", 
+    request: "Mission trip safety", 
+    date: "Feb 20, 2025", 
+    status: "ongoing",
+    category: "Missions", 
+    reminderSet: false,
+    prayingCount: 8
+  },
+  { 
+    id: '3', 
+    name: "Thompson family", 
+    request: "New baby", 
+    date: "Feb 15, 2025", 
+    status: "answered",
+    category: "Family", 
+    reminderSet: false,
+    prayingCount: 24
+  },
+  { 
+    id: '4', 
+    name: "Youth Ministry", 
+    request: "Summer camp planning", 
+    date: "Feb 10, 2025", 
+    status: "ongoing",
+    category: "Church", 
+    reminderSet: true,
+    prayingCount: 5
+  },
+  { 
+    id: '5', 
+    name: "Elder Smith", 
+    request: "Wisdom for congregation decisions", 
+    date: "Feb 5, 2025", 
+    status: "ongoing",
+    category: "Church", 
+    reminderSet: true,
+    prayingCount: 15
+  }
 ];
 
 export const MOCK_EVENTS: ServiceEvent[] = [
-  { id: '1', title: 'Sunday Morning Worship', date: '2023-10-29', time: '10:00 AM', type: 'Sunday Morning', description: 'Sermon: "The Pattern of Sound Words" (2 Timothy 1:13).', scripture: '2 Timothy 1:13' },
-  { id: '2', title: 'Sunday Evening Worship', date: '2023-10-29', time: '6:00 PM', type: 'Sunday Evening', description: 'Singing Night - A Capella Praise.', scripture: 'Ephesians 5:19' },
-  { id: '3', title: 'Midweek Bible Study', date: '2023-11-01', time: '7:00 PM', type: 'Midweek', description: 'Study of the Book of Romans.', scripture: 'Romans 8' },
+  { id: '1', title: 'Sunday Worship Service', date: 'Sunday', time: '10:00 AM', type: 'Sunday Morning', description: 'Sermon: "The Pattern of Sound Words" (2 Timothy 1:13).', scripture: '2 Timothy 1:13' },
+  { id: '2', title: 'Wednesday Bible Study', date: 'Wednesday', time: '7:00 PM', type: 'Midweek', description: 'Study of the Book of Romans.', scripture: 'Romans 8' },
+  { id: '3', title: 'Youth Group Meeting', date: 'Friday', time: '6:00 PM', type: 'Special', description: 'Devotional and Activity Night.', scripture: '1 Timothy 4:12' },
 ];
 
 export const MOCK_POSTS: ForumPost[] = [

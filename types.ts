@@ -9,11 +9,12 @@ export enum AppView {
 
 export interface PrayerRequest {
   id: string;
-  title: string;
-  category: 'Personal' | 'Congregation' | 'Sick' | 'Missions';
+  name: string;
+  request: string;
+  category: string;
   date: string;
-  isAnswered: boolean;
-  notes?: string;
+  status: 'ongoing' | 'answered';
+  reminderSet: boolean;
   prayingCount: number;
 }
 
